@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BallProject
+namespace Knapsack
 {
 #if WINDOWS || LINUX
     /// <summary>
