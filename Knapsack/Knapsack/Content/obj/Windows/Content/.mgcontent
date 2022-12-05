@@ -4,9 +4,9 @@
   <Platform>Windows</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/mrceb/Documents/GitHub/Knapsack/Knapsack/Knapsack/Content/floortile.png</File>
-    <File>C:/Users/mrceb/Documents/GitHub/Knapsack/Knapsack/Knapsack/Content/font.spritefont</File>
-    <File>C:/Users/mrceb/Documents/GitHub/Knapsack/Knapsack/Knapsack/Content/walltile.png</File>
+    <File>C:/Users/Marcus/Dropbox/My PC (Marcus2)/Documents/GitHub/Knapsack/Knapsack/Knapsack/Content/floortile.png</File>
+    <File>C:/Users/Marcus/Dropbox/My PC (Marcus2)/Documents/GitHub/Knapsack/Knapsack/Knapsack/Content/font.spritefont</File>
+    <File>C:/Users/Marcus/Dropbox/My PC (Marcus2)/Documents/GitHub/Knapsack/Knapsack/Knapsack/Content/walltile.png</File>
   </SourceFiles>
   <DestFiles>
     <File xsi:nil="true" />
