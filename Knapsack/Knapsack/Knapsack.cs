@@ -24,6 +24,9 @@ namespace Knapsack
 
         public void AddContent(Item item)
         {
+            if (item.weight + currentFill > capacity)
+                return;
+
             content.Add(item);
             currentFill += item.weight;
             currentValue += item.value;
@@ -76,6 +79,19 @@ namespace Knapsack
             }
 
             return item;
+        }
+
+        public int contentCount()
+        {
+            return content.Count();
+        }
+
+        public Item Item(int index)
+        {
+            if (content.Count() < index)
+                return null;
+
+            return content[index];
         }
     }
 }

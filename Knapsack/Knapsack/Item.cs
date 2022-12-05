@@ -8,13 +8,13 @@ namespace Knapsack
 {
     public class Item
     {
-        public int weight;
-        public int value;
+        public float weight;
+        public float value;
         public string itemName;
 
         public float weightValueRatio = 0;
 
-        public Item(int weight, int value, string itemName)
+        public Item(float weight, float value, string itemName)
         {
             this.weight = weight;
             this.value = value;

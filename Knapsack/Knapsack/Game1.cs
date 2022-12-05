@@ -69,7 +69,7 @@ namespace Knapsack
             /////////////////////////////////////////////////////////////////////////
 
 
-            //for (int i = 0; i < 20; i++)
+            //for (int i = 0; i < 40; i++)
             //{
             //    Item item = new Item(random.Next(1, 10), random.Next(1, 20), "randomItem" + i);
             //    itemList.Add(item);
@@ -93,9 +93,13 @@ namespace Knapsack
             itemList.Add(item7);
             item8 = new Item(1, 10, "ring");
             itemList.Add(item8);
-            item9 = new Item(1, 0, "paper");
+            item9 = new Item(1, 1, "paper");
             itemList.Add(item9);
 
+            firstKnapsack.AddContent(item0);
+
+            secondKnapsack.AddContent(item3);
+            secondKnapsack.AddContent(item2);
         }
 
 
@@ -118,9 +122,27 @@ namespace Knapsack
             spriteBatch.Draw(backgroundTexture, knapsackPos, Color.SandyBrown);
             spriteBatch.Draw(backgroundTexture, knapsack2Pos, Color.SandyBrown);
 
-            spriteBatch.DrawString(font, "Information ", new Vector2(buttonPos.Center.X, buttonPos.Center.Y), Color.Orange);
-            spriteBatch.DrawString(font, "First Knapsack ", new Vector2(knapsackPos.Center.X, knapsackPos.Center.Y), Color.Orange);
-            spriteBatch.DrawString(font, "Second Knapsack ", new Vector2(knapsack2Pos.Center.X, knapsack2Pos.Center.Y), Color.Orange);
+            for (int i = 0; i < itemList.Count; i++)
+            {
+                spriteBatch.DrawString(font, "Item: " + itemList[i].itemName + " Value: " + itemList[i].value + " Weight: " + itemList[i].weight + " V/W ratio: " + itemList[i].weightValueRatio.ToString("0.00"),
+                    new Vector2(buttonPos.X + 25, 50 + (buttonPos.Y + i * 20)), Color.Orange);
+            }
+
+            for (int i = 0; i < firstKnapsack.contentCount(); i++)
+            {
+                spriteBatch.DrawString(font, "Item: " + firstKnapsack.Item(i).itemName + " Value: " + firstKnapsack.Item(i).value + " Weight: " + firstKnapsack.Item(i).weight + " V/W ratio: " + firstKnapsack.Item(i).weightValueRatio.ToString("0.00"),
+                    new Vector2(knapsackPos.X + 45, 30 + (knapsackPos.Y + i * 20)), Color.Orange);
+            }
+
+            for (int i = 0; i < secondKnapsack.contentCount(); i++)
+            {
+                spriteBatch.DrawString(font, "Item: " + secondKnapsack.Item(i).itemName + " Value: " + secondKnapsack.Item(i).value + " Weight: " + secondKnapsack.Item(i).weight + " V/W ratio: " + secondKnapsack.Item(i).weightValueRatio.ToString("0.00"),
+                    new Vector2(knapsack2Pos.X + 45, 30 + (knapsack2Pos.Y + i * 20)), Color.Orange);
+            }
+
+            spriteBatch.DrawString(font, "Avalible Items", new Vector2(buttonPos.X + 25 , buttonPos.Y + 20), Color.Orange);
+            spriteBatch.DrawString(font, "First Knapsack    Capacaty: " + firstKnapsack.capacity + "  Current Fill: " + firstKnapsack.currentFill + "  Current Value: " + firstKnapsack.currentValue, new Vector2(knapsackPos.X + 40, knapsackPos.Y), Color.Orange);
+            spriteBatch.DrawString(font, "Second Knapsack    Capacaty: " + secondKnapsack.capacity + "  Current Fill: " + secondKnapsack.currentFill + "  Current Value: " + secondKnapsack.currentValue, new Vector2(knapsack2Pos.X + 40, knapsack2Pos.Y), Color.Orange);
 
             spriteBatch.End();
             base.Draw(gameTime);
