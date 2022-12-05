@@ -75,33 +75,34 @@ namespace Knapsack
             //    itemList.Add(item);
             //}
 
-            item0 = new Item(1, 1, "apple");
+            item0 = new Item(1, 1, "Apple");
             itemList.Add(item0);
-            item1 = new Item(3, 6, "book");
+            item1 = new Item(3, 6, "Book");
             itemList.Add(item1);
-            item2 = new Item(2, 8, "gloves");
+            item2 = new Item(2, 8, "Gloves");
             itemList.Add(item2);
-            item3 = new Item(10, 1, "stone");
+            item3 = new Item(10, 1, "Stone");
             itemList.Add(item3);
-            item4 = new Item(6, 5, "hat");
+            item4 = new Item(6, 5, "Hat");
             itemList.Add(item4);
-            item5 = new Item(5, 6, "stick");
+            item5 = new Item(5, 6, "Stick");
             itemList.Add(item5);
-            item6 = new Item(1, 4, "needle");
+            item6 = new Item(1, 4, "Needle");
             itemList.Add(item6);
-            item7 = new Item(1, 2, "jarn");
+            item7 = new Item(1, 2, "Jarn");
             itemList.Add(item7);
-            item8 = new Item(1, 10, "ring");
+            item8 = new Item(1, 10, "Ring");
             itemList.Add(item8);
-            item9 = new Item(1, 1, "paper");
+            item9 = new Item(1, 1, "Paper");
             itemList.Add(item9);
+
+            //////////////////////////////////////////////////////////////////////
 
             firstKnapsack.AddContent(item0);
 
             secondKnapsack.AddContent(item3);
             secondKnapsack.AddContent(item2);
         }
-
 
         protected override void UnloadContent()
         {
