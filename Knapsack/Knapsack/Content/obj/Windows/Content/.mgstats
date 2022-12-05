@@ -1,0 +1,4 @@
+Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"C:/Users/mrceb/source/repos/MonoGames/BallProject/BallProject/Content/ball.png","C:/Users/mrceb/source/repos/MonoGames/BallProject/BallProject/Content/bin/Windows/Content/ball.xnb","TextureProcessor","Texture2DContent",1962,10085,0,6861651
+"C:/Users/mrceb/source/repos/MonoGames/BallProject/BallProject/Content/floortile.png","C:/Users/mrceb/source/repos/MonoGames/BallProject/BallProject/Content/bin/Windows/Content/floortile.xnb","TextureProcessor","Texture2DContent",1649,10085,0,0059841
+"C:/Users/mrceb/source/repos/MonoGames/BallProject/BallProject/Content/walltile.png","C:/Users/mrceb/source/repos/MonoGames/BallProject/BallProject/Content/bin/Windows/Content/walltile.xnb","TextureProcessor","Texture2DContent",257,10085,0,0109703
