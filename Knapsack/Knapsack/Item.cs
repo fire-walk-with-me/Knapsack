@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Knapsack
 {
-    public class Item : IComparable<Item>
+    public class Item
     {
+        public bool avalible;
         public float weight;
         public float value;
         public string itemName;
@@ -19,16 +20,10 @@ namespace Knapsack
             this.weight = weight;
             this.value = value;
             this.itemName = itemName;
+            avalible = true;
 
             if(value != 0 && weight != 0) weightValueRatio = value / weight;
             else weightValueRatio = value + weight;
-        }
-
-        public int CompareTo(Item compare)
-        {
-            if (compare == null) return 1;
-
-            else return this.weightValueRatio.CompareTo(compare.weightValueRatio);
         }
     }
 }

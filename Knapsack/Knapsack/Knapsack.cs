@@ -12,7 +12,7 @@ namespace Knapsack
         public float capacity;
         public float currentFill;
         public float currentValue;
-        private List<Item> content = new List<Item>();
+        public List<Item> content = new List<Item>();
 
         public Knapsack(int ID, float capacity)
         {
@@ -27,6 +27,7 @@ namespace Knapsack
             if (item.weight + currentFill > capacity)
                 return;
 
+            item.avalible = false;
             content.Add(item);
             currentFill += item.weight;
             currentValue += item.value;
@@ -37,6 +38,7 @@ namespace Knapsack
             if (!content.Contains(item))
                 return;
 
+            item.avalible = true;
             content.Remove(item);
             currentFill -= item.weight;
             currentValue -= item.value;
@@ -47,6 +49,7 @@ namespace Knapsack
             if (content.Count < i)
                 return;
 
+            content[i].avalible = true;
             currentFill -= content[i].weight;
             currentValue -= content[i].value;
             content.RemoveAt(i);
@@ -76,6 +79,18 @@ namespace Knapsack
             foreach (Item i in content)
             {
                 if (i.weightValueRatio > item.weightValueRatio) item = i;
+            }
+
+            return item;
+        }
+
+        public Item findLeastWeightItem()
+        {
+            Item item = new Item(100, 1, "temp");
+
+            foreach (Item i in content)
+            {
+                if (i.weight < item.weight) item = i;
             }
 
             return item;

@@ -18,6 +18,8 @@ namespace Knapsack
         Rectangle knapsack2Pos;
         Random random;
         SpriteFont font;
+        bool pressed;
+        float timer;
 
         Knapsack firstKnapsack;
         Knapsack secondKnapsack;
@@ -57,8 +59,8 @@ namespace Knapsack
             knapsackPos = new Rectangle(Window.ClientBounds.Width / 3, 0, (Window.ClientBounds.Width / 3) * 2, Window.ClientBounds.Height / 2);
             knapsack2Pos = new Rectangle(Window.ClientBounds.Width / 3, Window.ClientBounds.Height / 2, (Window.ClientBounds.Width / 3) * 2, Window.ClientBounds.Height / 2);
             font = Content.Load<SpriteFont>("font");
-             
-            
+
+
             random = new Random();
 
             //////////////////////////////////////////////////////////////////////////
@@ -71,12 +73,9 @@ namespace Knapsack
 
             for (int i = 0; i < 40; i++)
             {
-                Item item = new Item(random.Next(1, 10), random.Next(1, 20), "rndIt" + i);
+                Item item = new Item(random.Next(3, 10), random.Next(1, 20), "rndIt" + i);
                 itemList.Add(item);
             }
-
-            InsertionSort(itemList);
-            itemList.Reverse();
 
             //item0 = new Item(1, 1, "Apple");
             //itemList.Add(item0);
@@ -101,15 +100,74 @@ namespace Knapsack
 
             //////////////////////////////////////////////////////////////////////
 
-            //firstKnapsack.AddContent(item0);
-
-            //secondKnapsack.AddContent(item3);
-            //secondKnapsack.AddContent(item2);
         }
 
         protected override void UnloadContent()
         {
         }
+
+        private void FillKnapsacks()
+        {
+            for (int i = 0; i < itemList.Count; i++)
+            {
+                if (!itemList[i].avalible) continue;
+                if (i % 2 == 0)
+                {
+                    if (firstKnapsack.currentFill + itemList[i].weight <= firstKnapsack.capacity)
+                        firstKnapsack.AddContent(itemList[i]);
+                    else if (secondKnapsack.currentFill + itemList[i].weight <= secondKnapsack.capacity)
+                        secondKnapsack.AddContent(itemList[i]);
+                }
+                else
+                {
+                    if (secondKnapsack.currentFill + itemList[i].weight <= secondKnapsack.capacity)
+                        secondKnapsack.AddContent(itemList[i]);
+                    else if (firstKnapsack.currentFill + itemList[i].weight <= firstKnapsack.capacity)
+                        firstKnapsack.AddContent(itemList[i]);
+                }
+            }
+        }
+
+        void MoveAroundItems()
+        {
+            if (firstKnapsack.currentFill < firstKnapsack.capacity && secondKnapsack.currentFill < secondKnapsack.capacity)
+            {
+                Item item;
+                float f;
+
+                if (firstKnapsack.capacity - firstKnapsack.currentFill < secondKnapsack.capacity - secondKnapsack.currentFill)
+                {
+                    item = secondKnapsack.findLeastWeightItem();
+                    f = (firstKnapsack.capacity - firstKnapsack.currentFill) + item.weight;
+
+                    foreach (Item i in firstKnapsack.content)
+                    {
+                        if (i.weight == f)
+                        {
+                            secondKnapsack.RemoveItem(i);
+                            firstKnapsack.AddContent(i);
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    item = firstKnapsack.findLeastWeightItem();
+                    f = (secondKnapsack.capacity - secondKnapsack.currentFill) + item.weight;
+
+                    foreach (Item i in secondKnapsack.content)
+                    {
+                        if (i.weight == f)
+                        {
+                            secondKnapsack.RemoveItem(i);
+                            firstKnapsack.AddContent(i);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
 
         public void InsertionSort(List<Item> l)
         {
@@ -127,6 +185,39 @@ namespace Knapsack
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
+            if (Keyboard.GetState().IsKeyDown(Keys.G) && !pressed)
+            {
+                pressed = true;
+
+                InsertionSort(itemList);
+                itemList.Reverse();
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.H) && !pressed)
+            {
+                pressed = true;
+
+                FillKnapsacks();
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.J) && !pressed)
+            {
+                pressed = true;
+
+                MoveAroundItems();
+            }
+
+            if (pressed)
+            {
+                timer += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                if (timer >= 300)
+                {
+                    pressed = false;
+                    timer = 0;
+                }
+            }
         }
 
         protected override void Draw(GameTime gameTime)
@@ -140,8 +231,9 @@ namespace Knapsack
 
             for (int i = 0; i < itemList.Count; i++)
             {
-                spriteBatch.DrawString(font, "Item: " + itemList[i].itemName + " V: " + itemList[i].value + " W: " + itemList[i].weight + " V/W ratio: " + itemList[i].weightValueRatio.ToString("0.00"),
-                    new Vector2(buttonPos.X + 25, 50 + (buttonPos.Y + i * 20)), Color.Orange);
+                if (itemList[i].avalible)
+                    spriteBatch.DrawString(font, "Item: " + itemList[i].itemName + " V: " + itemList[i].value + " W: " + itemList[i].weight + " V/W ratio: " + itemList[i].weightValueRatio.ToString("0.00"),
+                        new Vector2(buttonPos.X + 25, 50 + (buttonPos.Y + i * 20)), Color.Orange);
             }
 
             for (int i = 0; i < firstKnapsack.contentCount(); i++)
@@ -156,7 +248,7 @@ namespace Knapsack
                     new Vector2(knapsack2Pos.X + 45, 30 + (knapsack2Pos.Y + i * 20)), Color.Orange);
             }
 
-            spriteBatch.DrawString(font, "Avalible Items", new Vector2(buttonPos.X + 25 , buttonPos.Y + 20), Color.Orange);
+            spriteBatch.DrawString(font, "Avalible Items", new Vector2(buttonPos.X + 25, buttonPos.Y + 20), Color.Orange);
             spriteBatch.DrawString(font, "First Knapsack    Capacaty: " + firstKnapsack.capacity + "  Current Fill: " + firstKnapsack.currentFill + "  Current Value: " + firstKnapsack.currentValue, new Vector2(knapsackPos.X + 40, knapsackPos.Y), Color.Orange);
             spriteBatch.DrawString(font, "Second Knapsack    Capacaty: " + secondKnapsack.capacity + "  Current Fill: " + secondKnapsack.currentFill + "  Current Value: " + secondKnapsack.currentValue, new Vector2(knapsack2Pos.X + 40, knapsack2Pos.Y), Color.Orange);
 
