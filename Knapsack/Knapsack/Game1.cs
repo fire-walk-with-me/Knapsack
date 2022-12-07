@@ -17,7 +17,6 @@ namespace Knapsack
         Rectangle knapsackPos;
         Rectangle knapsack2Pos;
         Random random;
-
         SpriteFont font;
 
         Knapsack firstKnapsack;
@@ -58,54 +57,70 @@ namespace Knapsack
             knapsackPos = new Rectangle(Window.ClientBounds.Width / 3, 0, (Window.ClientBounds.Width / 3) * 2, Window.ClientBounds.Height / 2);
             knapsack2Pos = new Rectangle(Window.ClientBounds.Width / 3, Window.ClientBounds.Height / 2, (Window.ClientBounds.Width / 3) * 2, Window.ClientBounds.Height / 2);
             font = Content.Load<SpriteFont>("font");
+             
             
             random = new Random();
 
             //////////////////////////////////////////////////////////////////////////
 
-            firstKnapsack = new Knapsack(1, 70);
-            secondKnapsack = new Knapsack(2, 65);
+            firstKnapsack = new Knapsack(1, 15);
+            secondKnapsack = new Knapsack(2, 12);
 
             /////////////////////////////////////////////////////////////////////////
 
 
-            //for (int i = 0; i < 40; i++)
-            //{
-            //    Item item = new Item(random.Next(1, 10), random.Next(1, 20), "randomItem" + i);
-            //    itemList.Add(item);
-            //}
+            for (int i = 0; i < 40; i++)
+            {
+                Item item = new Item(random.Next(1, 10), random.Next(1, 20), "rndIt" + i);
+                itemList.Add(item);
+            }
 
-            item0 = new Item(1, 1, "Apple");
-            itemList.Add(item0);
-            item1 = new Item(3, 6, "Book");
-            itemList.Add(item1);
-            item2 = new Item(2, 8, "Gloves");
-            itemList.Add(item2);
-            item3 = new Item(10, 1, "Stone");
-            itemList.Add(item3);
-            item4 = new Item(6, 5, "Hat");
-            itemList.Add(item4);
-            item5 = new Item(5, 6, "Stick");
-            itemList.Add(item5);
-            item6 = new Item(1, 4, "Needle");
-            itemList.Add(item6);
-            item7 = new Item(1, 2, "Jarn");
-            itemList.Add(item7);
-            item8 = new Item(1, 10, "Ring");
-            itemList.Add(item8);
-            item9 = new Item(1, 1, "Paper");
-            itemList.Add(item9);
+            InsertionSort(itemList);
+            itemList.Reverse();
+
+            //item0 = new Item(1, 1, "Apple");
+            //itemList.Add(item0);
+            //item1 = new Item(3, 6, "Book");
+            //itemList.Add(item1);
+            //item2 = new Item(2, 8, "Gloves");
+            //itemList.Add(item2);
+            //item3 = new Item(10, 1, "Stone");
+            //itemList.Add(item3);
+            //item4 = new Item(6, 5, "Hat");
+            //itemList.Add(item4);
+            //item5 = new Item(5, 6, "Stick");
+            //itemList.Add(item5);
+            //item6 = new Item(1, 4, "Needle");
+            //itemList.Add(item6);
+            //item7 = new Item(1, 2, "Jarn");
+            //itemList.Add(item7);
+            //item8 = new Item(1, 10, "Ring");
+            //itemList.Add(item8);
+            //item9 = new Item(1, 1, "Paper");
+            //itemList.Add(item9);
 
             //////////////////////////////////////////////////////////////////////
 
-            firstKnapsack.AddContent(item0);
+            //firstKnapsack.AddContent(item0);
 
-            secondKnapsack.AddContent(item3);
-            secondKnapsack.AddContent(item2);
+            //secondKnapsack.AddContent(item3);
+            //secondKnapsack.AddContent(item2);
         }
 
         protected override void UnloadContent()
         {
+        }
+
+        public void InsertionSort(List<Item> l)
+        {
+            int N = l.Count;
+            for (int i = 0; i < N; i++)
+            {
+                for (int j = i; j > 0 && l[j].weightValueRatio < l[j - 1].weightValueRatio; j--)
+                {
+                    Item x = l[j]; l[j] = l[j - 1]; l[j - 1] = x;
+                }
+            }
         }
 
         protected override void Update(GameTime gameTime)
@@ -125,7 +140,7 @@ namespace Knapsack
 
             for (int i = 0; i < itemList.Count; i++)
             {
-                spriteBatch.DrawString(font, "Item: " + itemList[i].itemName + " Value: " + itemList[i].value + " Weight: " + itemList[i].weight + " V/W ratio: " + itemList[i].weightValueRatio.ToString("0.00"),
+                spriteBatch.DrawString(font, "Item: " + itemList[i].itemName + " V: " + itemList[i].value + " W: " + itemList[i].weight + " V/W ratio: " + itemList[i].weightValueRatio.ToString("0.00"),
                     new Vector2(buttonPos.X + 25, 50 + (buttonPos.Y + i * 20)), Color.Orange);
             }
 
