@@ -130,42 +130,80 @@ namespace Knapsack
 
         void MoveAroundItems()
         {
-            if (firstKnapsack.currentFill < firstKnapsack.capacity && secondKnapsack.currentFill < secondKnapsack.capacity)
+            if (firstKnapsack.HasSpaceLeft() && secondKnapsack.HasSpaceLeft())
             {
-                Item item;
-                float f;
+                //Item item;
+                //float f;
 
-                if (firstKnapsack.capacity - firstKnapsack.currentFill < secondKnapsack.capacity - secondKnapsack.currentFill)
+                if (firstKnapsack.SpaceLeft() < secondKnapsack.SpaceLeft())
                 {
-                    item = secondKnapsack.findLeastWeightItem();
-                    f = (firstKnapsack.capacity - firstKnapsack.currentFill) + item.weight;
+                    MoveItem(secondKnapsack, firstKnapsack);
+                    //item = secondKnapsack.findLeastWeightItem();
+                    //f = (firstKnapsack.capacity - firstKnapsack.currentFill) + item.weight;
 
-                    foreach (Item i in firstKnapsack.content)
-                    {
-                        if (i.weight == f)
-                        {
-                            secondKnapsack.RemoveItem(i);
-                            firstKnapsack.AddContent(i);
-                            break;
-                        }
-                    }
+                    //foreach (Item i in firstKnapsack.content)
+                    //{
+                    //    if (i.weight == f)
+                    //    {
+                    //        secondKnapsack.RemoveItem(i);
+                    //        firstKnapsack.AddContent(i);
+                    //        break;
+                    //    }
+                    //}
+                }
+                else if(secondKnapsack.SpaceLeft() > firstKnapsack.SpaceLeft())
+                {
+                    MoveItem(firstKnapsack, secondKnapsack);
+                    //item = firstKnapsack.findLeastWeightItem();
+                    //f = (secondKnapsack.capacity - secondKnapsack.currentFill) + item.weight;
+
+                    //foreach (Item i in secondKnapsack.content)
+                    //{
+                    //    if (i.weight == f)
+                    //    {
+                    //        secondKnapsack.RemoveItem(i);
+                    //        firstKnapsack.AddContent(i);
+                    //        break;
+                    //    }
+                    //}
                 }
                 else
                 {
-                    item = firstKnapsack.findLeastWeightItem();
-                    f = (secondKnapsack.capacity - secondKnapsack.currentFill) + item.weight;
-
-                    foreach (Item i in secondKnapsack.content)
+                    MoveItem(firstKnapsack, secondKnapsack);
+                    if(firstKnapsack.HasSpaceLeft() && secondKnapsack.HasSpaceLeft())
                     {
-                        if (i.weight == f)
-                        {
-                            secondKnapsack.RemoveItem(i);
-                            firstKnapsack.AddContent(i);
-                            break;
-                        }
+                        MoveItem(secondKnapsack, firstKnapsack);
                     }
                 }
             }
+        }
+
+        private void MoveItem(Knapsack knapsackWithMostSpace, Knapsack knapsackWithLessSpace)
+        {
+            Item firstItemToRemove;
+            Item secondItemToRemove;
+
+            firstItemToRemove = knapsackWithMostSpace.findLeastWeightItem(); //Unsure about this one
+            float spaceToFill = knapsackWithMostSpace.SpaceLeft() + firstItemToRemove.weight;
+            bool done = false;
+            do
+            {
+                foreach (Item item in knapsackWithLessSpace.content)
+                {
+                    if (item.weight == spaceToFill)
+                    {
+                        secondItemToRemove = item;
+                        knapsackWithLessSpace.RemoveItem(item);
+                        knapsackWithMostSpace.RemoveItem(firstItemToRemove);
+
+                        knapsackWithLessSpace.AddContent(firstItemToRemove);
+                        knapsackWithMostSpace.AddContent(item);
+                        done = true;
+                        break;
+                    }
+                }
+                spaceToFill--;
+            } while (!done || spaceToFill > 0);                     
         }
 
 

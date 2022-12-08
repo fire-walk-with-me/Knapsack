@@ -31,6 +31,7 @@ namespace Knapsack
             content.Add(item);
             currentFill += item.weight;
             currentValue += item.value;
+
         }
 
         public void RemoveItem(Item item)
@@ -94,6 +95,16 @@ namespace Knapsack
             }
 
             return item;
+        }
+
+        public float SpaceLeft()
+        {
+            return capacity - currentFill;
+        }
+
+        public bool HasSpaceLeft()
+        {
+            return currentFill < capacity;
         }
 
         public int contentCount()
