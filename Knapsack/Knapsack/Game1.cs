@@ -65,15 +65,15 @@ namespace Knapsack
 
             //////////////////////////////////////////////////////////////////////////
 
-            firstKnapsack = new Knapsack(1, 15);
-            secondKnapsack = new Knapsack(2, 12);
+            firstKnapsack = new Knapsack(16);
+            secondKnapsack = new Knapsack(13);
 
             /////////////////////////////////////////////////////////////////////////
 
 
             for (int i = 0; i < 40; i++)
             {
-                Item item = new Item(random.Next(3, 10), random.Next(1, 20), "rndIt" + i);
+                Item item = new Item(random.Next(2, 10), random.Next(1, 20), "Item" + i);
                 itemList.Add(item);
             }
 
@@ -270,19 +270,19 @@ namespace Knapsack
             for (int i = 0; i < itemList.Count; i++)
             {
                 if (itemList[i].avalible)
-                    spriteBatch.DrawString(font, "Item: " + itemList[i].itemName + " V: " + itemList[i].value + " W: " + itemList[i].weight + " V/W ratio: " + itemList[i].weightValueRatio.ToString("0.00"),
+                    spriteBatch.DrawString(font, "Item: " + itemList[i].itemName + ", V: " + itemList[i].value + ", W: " + itemList[i].weight + ", V/W ratio: " + itemList[i].weightValueRatio.ToString("0.0"),
                         new Vector2(buttonPos.X + 25, 50 + (buttonPos.Y + i * 20)), Color.Orange);
             }
 
             for (int i = 0; i < firstKnapsack.contentCount(); i++)
             {
-                spriteBatch.DrawString(font, "Item: " + firstKnapsack.Item(i).itemName + " Value: " + firstKnapsack.Item(i).value + " Weight: " + firstKnapsack.Item(i).weight + " V/W ratio: " + firstKnapsack.Item(i).weightValueRatio.ToString("0.00"),
+                spriteBatch.DrawString(font, "Item: " + firstKnapsack.Item(i).itemName + ", Value: " + firstKnapsack.Item(i).value + ", Weight: " + firstKnapsack.Item(i).weight + ", V/W ratio: " + firstKnapsack.Item(i).weightValueRatio.ToString("0.0"),
                     new Vector2(knapsackPos.X + 45, 30 + (knapsackPos.Y + i * 20)), Color.Orange);
             }
 
             for (int i = 0; i < secondKnapsack.contentCount(); i++)
             {
-                spriteBatch.DrawString(font, "Item: " + secondKnapsack.Item(i).itemName + " Value: " + secondKnapsack.Item(i).value + " Weight: " + secondKnapsack.Item(i).weight + " V/W ratio: " + secondKnapsack.Item(i).weightValueRatio.ToString("0.00"),
+                spriteBatch.DrawString(font, "Item: " + secondKnapsack.Item(i).itemName + ", Value: " + secondKnapsack.Item(i).value + ", Weight: " + secondKnapsack.Item(i).weight + ", V/W ratio: " + secondKnapsack.Item(i).weightValueRatio.ToString("0.0"),
                     new Vector2(knapsack2Pos.X + 45, 30 + (knapsack2Pos.Y + i * 20)), Color.Orange);
             }
 
