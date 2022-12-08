@@ -8,15 +8,13 @@ namespace Knapsack
 {
     public class Knapsack
     {
-        public int ID;
         public float capacity;
         public float currentFill;
         public float currentValue;
         public List<Item> content = new List<Item>();
 
-        public Knapsack(int ID, float capacity)
+        public Knapsack(float capacity)
         {
-            this.ID = ID;
             this.capacity = capacity;
             currentFill = 0;
             currentValue = 0;
