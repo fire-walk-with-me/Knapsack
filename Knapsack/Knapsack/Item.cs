@@ -25,5 +25,13 @@ namespace Knapsack
             if(value != 0 && weight != 0) weightValueRatio = value / weight;
             else weightValueRatio = value + weight;
         }
+
+        public void SetNewWeightValueRatio()
+        {
+            if (value != 0 && weight != 0) weightValueRatio = value / weight;
+            else weightValueRatio = value + weight;
+        }
+
+
     }
 }

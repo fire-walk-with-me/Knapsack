@@ -20,6 +20,8 @@ namespace Knapsack
         SpriteFont font;
         bool pressed;
         float timer;
+        int minWeight = 8;
+        int maxWeight = 15;
 
         Knapsack firstKnapsack;
         Knapsack secondKnapsack;
@@ -65,15 +67,15 @@ namespace Knapsack
 
             //////////////////////////////////////////////////////////////////////////
 
-            firstKnapsack = new Knapsack(16);
-            secondKnapsack = new Knapsack(13);
+            firstKnapsack = new Knapsack(64);
+            secondKnapsack = new Knapsack(50);
 
             /////////////////////////////////////////////////////////////////////////
 
 
             for (int i = 0; i < 40; i++)
             {
-                Item item = new Item(random.Next(2, 10), random.Next(1, 20), "Item" + i);
+                Item item = new Item(random.Next(minWeight, maxWeight), random.Next(10, 20), "Item" + i);
                 itemList.Add(item);
             }
 
@@ -132,42 +134,16 @@ namespace Knapsack
         {
             if (firstKnapsack.HasSpaceLeft() && secondKnapsack.HasSpaceLeft())
             {
-                //Item item;
-                //float f;
 
                 if (firstKnapsack.SpaceLeft() < secondKnapsack.SpaceLeft())
                 {
                     MoveItem(secondKnapsack, firstKnapsack);
-                    //item = secondKnapsack.findLeastWeightItem();
-                    //f = (firstKnapsack.capacity - firstKnapsack.currentFill) + item.weight;
-
-                    //foreach (Item i in firstKnapsack.content)
-                    //{
-                    //    if (i.weight == f)
-                    //    {
-                    //        secondKnapsack.RemoveItem(i);
-                    //        firstKnapsack.AddContent(i);
-                    //        break;
-                    //    }
-                    //}
                 }
                 else if(secondKnapsack.SpaceLeft() > firstKnapsack.SpaceLeft())
                 {
                     MoveItem(firstKnapsack, secondKnapsack);
-                    //item = firstKnapsack.findLeastWeightItem();
-                    //f = (secondKnapsack.capacity - secondKnapsack.currentFill) + item.weight;
-
-                    //foreach (Item i in secondKnapsack.content)
-                    //{
-                    //    if (i.weight == f)
-                    //    {
-                    //        secondKnapsack.RemoveItem(i);
-                    //        firstKnapsack.AddContent(i);
-                    //        break;
-                    //    }
-                    //}
                 }
-                else
+                else //Could improve the second if statement to not run 
                 {
                     MoveItem(firstKnapsack, secondKnapsack);
                     if(firstKnapsack.HasSpaceLeft() && secondKnapsack.HasSpaceLeft())
@@ -180,32 +156,51 @@ namespace Knapsack
 
         private void MoveItem(Knapsack knapsackWithMostSpace, Knapsack knapsackWithLessSpace)
         {
-            Item firstItemToRemove;
-            Item secondItemToRemove;
+            Item firstItem;
+            Item secondItem;
 
-            firstItemToRemove = knapsackWithMostSpace.findLeastWeightItem(); //Unsure about this one
-            float spaceToFill = knapsackWithMostSpace.SpaceLeft() + firstItemToRemove.weight;
+            float spaceToFill = knapsackWithLessSpace.SpaceLeft();
             bool done = false;
             do
             {
-                foreach (Item item in knapsackWithLessSpace.content)
+                for (int i = 0; i < knapsackWithMostSpace.contentCount(); i++)
                 {
-                    if (item.weight == spaceToFill)
+                    for (int j = 0; j < knapsackWithLessSpace.contentCount(); j++)
                     {
-                        secondItemToRemove = item;
-                        knapsackWithLessSpace.RemoveItem(item);
-                        knapsackWithMostSpace.RemoveItem(firstItemToRemove);
+                        if (knapsackWithLessSpace.SpaceLeft() + knapsackWithLessSpace.content[j].weight == knapsackWithMostSpace.content[i].weight)
+                        {
+                            firstItem = knapsackWithLessSpace.Item(j);
+                            secondItem = knapsackWithMostSpace.Item(i);
+                            
+                            knapsackWithLessSpace.RemoveItem(j);
+                            knapsackWithMostSpace.RemoveItem(i);
 
-                        knapsackWithLessSpace.AddContent(firstItemToRemove);
-                        knapsackWithMostSpace.AddContent(item);
-                        done = true;
-                        break;
+                            knapsackWithLessSpace.AddContent(secondItem);
+                            knapsackWithMostSpace.AddContent(firstItem);
+                            done = true;
+                            break;
+                        }
                     }
                 }
                 spaceToFill--;
-            } while (!done || spaceToFill > 0);                     
+            } while (!done && spaceToFill > 0);                     
         }
 
+        private void EmptyKnapsacks()
+        {
+            firstKnapsack.EmptyKanpsack();
+            secondKnapsack.EmptyKanpsack();
+        }
+
+        private void GenerateNewItemWeights()
+        {
+            foreach (Item item in itemList)
+            {
+                item.weight = random.Next(minWeight, maxWeight);
+                item.SetNewWeightValueRatio();
+
+            }
+        }
 
         public void InsertionSort(List<Item> l)
         {
@@ -244,6 +239,18 @@ namespace Knapsack
                 pressed = true;
 
                 MoveAroundItems();
+            }
+
+            if(Keyboard.GetState().IsKeyDown(Keys.K) && !pressed)
+            {
+                pressed = true;
+                EmptyKnapsacks();
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.L) && !pressed)
+            {
+                pressed = true;
+                GenerateNewItemWeights();
             }
 
             if (pressed)

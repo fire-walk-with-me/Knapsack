@@ -56,7 +56,13 @@ namespace Knapsack
 
         public void EmptyKanpsack()
         {
+            foreach (Item item in content)
+            {
+                item.avalible = true;
+            }
             content.Clear();
+            currentFill = 0;
+            currentValue = 0;
         }
 
         public Item findLeastValuableItem()
