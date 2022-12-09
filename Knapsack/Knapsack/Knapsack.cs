@@ -56,6 +56,9 @@ namespace Knapsack
 
         public void EmptyKanpsack()
         {
+            foreach (Item i in content) i.avalible = true;
+            currentFill = 0;
+            currentValue = 0;
             content.Clear();
         }
 

@@ -132,40 +132,13 @@ namespace Knapsack
         {
             if (firstKnapsack.HasSpaceLeft() && secondKnapsack.HasSpaceLeft())
             {
-                //Item item;
-                //float f;
-
                 if (firstKnapsack.SpaceLeft() < secondKnapsack.SpaceLeft())
                 {
                     MoveItem(secondKnapsack, firstKnapsack);
-                    //item = secondKnapsack.findLeastWeightItem();
-                    //f = (firstKnapsack.capacity - firstKnapsack.currentFill) + item.weight;
-
-                    //foreach (Item i in firstKnapsack.content)
-                    //{
-                    //    if (i.weight == f)
-                    //    {
-                    //        secondKnapsack.RemoveItem(i);
-                    //        firstKnapsack.AddContent(i);
-                    //        break;
-                    //    }
-                    //}
                 }
                 else if(secondKnapsack.SpaceLeft() > firstKnapsack.SpaceLeft())
                 {
                     MoveItem(firstKnapsack, secondKnapsack);
-                    //item = firstKnapsack.findLeastWeightItem();
-                    //f = (secondKnapsack.capacity - secondKnapsack.currentFill) + item.weight;
-
-                    //foreach (Item i in secondKnapsack.content)
-                    //{
-                    //    if (i.weight == f)
-                    //    {
-                    //        secondKnapsack.RemoveItem(i);
-                    //        firstKnapsack.AddContent(i);
-                    //        break;
-                    //    }
-                    //}
                 }
                 else
                 {
@@ -206,6 +179,12 @@ namespace Knapsack
             } while (!done || spaceToFill > 0);                     
         }
 
+        private void EmptyKnapsacks()
+        {
+            firstKnapsack.EmptyKanpsack();
+            secondKnapsack.EmptyKanpsack();
+        }
+
 
         public void InsertionSort(List<Item> l)
         {
@@ -244,6 +223,13 @@ namespace Knapsack
                 pressed = true;
 
                 MoveAroundItems();
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.E) && !pressed)
+            {
+                pressed = true;
+
+                EmptyKnapsacks();
             }
 
             if (pressed)
