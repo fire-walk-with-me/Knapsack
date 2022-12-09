@@ -134,7 +134,6 @@ namespace Knapsack
         {
             if (firstKnapsack.HasSpaceLeft() && secondKnapsack.HasSpaceLeft())
             {
-
                 if (firstKnapsack.SpaceLeft() < secondKnapsack.SpaceLeft())
                 {
                     MoveItem(secondKnapsack, firstKnapsack);
