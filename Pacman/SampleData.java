@@ -3,6 +3,8 @@ import dataRecording.DataSaverLoader;
 import dataRecording.DataTuple;
 import dataRecording.DataTuple.DiscreteTag;
 import pacman.game.Constants.MOVE;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SampleData {
 	MOVE outcome;
@@ -19,7 +21,9 @@ public class SampleData {
 	DiscreteTag distanceToClosestGhost; //Very_low (ghost close), Very_High (ghost far away)
 	
 	DiscreteTag distanceToPellet;	
-	DiscreteTag ghostVoulnerability;		
+	DiscreteTag ghostVoulnerability;
+	
+	public List<DiscreteTag> dataList = new ArrayList<DiscreteTag>();
 	
 	public SampleData(DataTuple mySample) {
 
@@ -30,7 +34,7 @@ public class SampleData {
 		//this.pacmanLivesLeft;
 		numOfPillsLeft = mySample.discretizeNumberOfPills(mySample.numOfPillsLeft);
 		numOfPowerPillsLeft = mySample.discretizeNumberOfPowerPills(mySample.numOfPowerPillsLeft);
-		isGhostEdible = mySample.discretizeVulnerability(mySample.isBlinkyEdible);
+		//isGhostEdible = mySample.discretizeVulnerability(mySample.isBlinkyEdible);
 		/*this.isInkyEdible;
 		this.isPinkyEdible;
 		this.isSueEdible;*/
@@ -46,11 +50,19 @@ public class SampleData {
 		//this.numberOfTotalPillsInLevel;
 		//this.numberOfTotalPowerPillsInLevel;
 		
+		dataList.add(mazeIndex);
+		dataList.add(currentLevel);
+		dataList.add(pacmanPosition);
+		dataList.add(numOfPillsLeft);
+		dataList.add(numOfPowerPillsLeft);
+		dataList.add(isGhostEdible);
+		dataList.add(ghostDistance);
+		
 		int[] distanceToGhosts = new int[] {mySample.blinkyDist, mySample.inkyDist, mySample.pinkyDist, mySample.sueDist};
 		boolean[] ghostEdible = new boolean[] {mySample.isBlinkyEdible, mySample.isInkyEdible, mySample.isPinkyEdible, mySample.isSueEdible};
 		
 		distanceToClosestGhost = mySample.discretizeDistance(TagDistanceToGhost(distanceToGhosts));
-		ghostVoulnerability = mySample.discretizeVulnerability(TagAreGhostsEdible(ghostEdible));
+		//ghostVoulnerability = mySample.discretizeVulnerability(TagAreGhostsEdible(ghostEdible));
 
 	}
 	

@@ -27,7 +27,9 @@ public DecisionTree GenerateTreeWithID3()
 {
 	decisionTree = new DecisionTree();
 	
+	//
 	//generate tree with ID3 and add nodes to it;
+	//
 	
 	return decisionTree;
 	}
@@ -38,9 +40,9 @@ boolean isSingleLable()
 {
 	String classification = lable;
 	
-	for (SampleData sample : sampleList) {
+	/*for (SampleData sample : sampleList) {
 		if(classification.compareTo(sample.lable) != 0) return false;
-	}
+	}*/
 	
 	return true;
 }

@@ -1,125 +1,72 @@
 package DT;
 
+import java.util.ArrayList;
+import java.util.List;
+import dataRecording.DataTuple.DiscreteTag;
+import pacman.game.Constants.MOVE;
+
 public class DecisionTree 
 {
-	class BinTree{
-		public boolean condition;
+	class Node{
 		public int id;
-		public String eval;
-		public BinTree trueBranch;
-		public BinTree falseBranch;
+		public int dataIndex;
+		public DiscreteTag condition;
+		public Node parent;
+		public List<Node> children = new ArrayList<Node>();
+		public MOVE move;
+		public double informationGain;
 		
-		public BinTree(int newId, boolean condition, String eval) {
+		public Node(int newId, DiscreteTag condition, int dataIndex) {
 			id = newId;
 			this.condition = condition;
+			this.dataIndex = dataIndex;
 		}
-	}
-	
-	BinTree root;
-	public String result;
-	
-	public void SetRoot(int newId, boolean condition, String eval)
-	{
-		root = new BinTree(newId, condition, eval);
-	}
-	
-	public void AddTrueNode(int existingNodeId, int newNodeId, boolean condition, String eval) {
-		if(root == null) {
-			return;
-		}
-		if(ParseTreeAndAddTrueNode(root, existingNodeId, newNodeId, condition, eval)) {
-			System.out.print("added node " + newNodeId + "onto true branch of node " + existingNodeId);
-		}
-		else {
-			System.out.print("Node " + existingNodeId + " not found!");
-		}
-	}
-	
-	private boolean ParseTreeAndAddTrueNode(BinTree currentNode, int existingNodeId, int newNodeId, boolean condition, String eval) {
-		if(currentNode.id == existingNodeId) {
-			if(currentNode.trueBranch == null) {
-				currentNode.trueBranch = new BinTree(newNodeId, condition, eval);
-			}
-			else {
-				System.out.print("WARNING: replacing " + "(id = " + currentNode.trueBranch.id + ") linked to true-branch of " + existingNodeId);
-			}
-			return true;
-		}
-		else {
-			if(currentNode.trueBranch != null) {
-				return ParseTreeAndAddTrueNode(currentNode.falseBranch, existingNodeId, newNodeId, condition, eval);
-			}
-			else {
-				return false;
-			}
-		}
-	}
-	
-	public void AddFalseNode(int existingNodeId, int newNodeId, boolean condition, String eval) {
-		if(root == null) {
-			System.out.print("ERROR: No DT!");
-			return;
-		}
-		if(ParseTreeAndAddFalseNode(root, existingNodeId, newNodeId, condition, eval)) {
-			System.out.print("added node " + newNodeId + "onto false branch of node " + existingNodeId);
-		}
-		else {
-			System.out.print("Node " + existingNodeId + " not found!");
-		}
-	}
-	
-	private boolean ParseTreeAndAddFalseNode(BinTree currentNode, int existingNodeId, int newNodeId, boolean condition, String eval) {
-		if(currentNode.id == existingNodeId) {
-			if(currentNode.falseBranch == null) {
-				currentNode.falseBranch = new BinTree(newNodeId, condition, eval);
-			}
-			else {
-				System.out.print("WARNING: replacing " + "(id = " + currentNode.trueBranch.id + ") linked to false-branch of " + existingNodeId);
-				currentNode.falseBranch = new BinTree(newNodeId, condition, eval);
-			}
-			return true;
-		}
-		else {
-			if(currentNode.trueBranch != null) {
-				if(ParseTreeAndAddFalseNode(currentNode.trueBranch, existingNodeId, newNodeId, condition, eval)) {
-					return true;
-				}
-				else {
-					if(currentNode.falseBranch != null) {
-						return ParseTreeAndAddFalseNode(currentNode.trueBranch, existingNodeId, newNodeId, condition, eval);
-					}
-					else return false;
-				}
-			}
-			else {
-				return false;
-			}
-		}
-	}
-	
-	private void Evaluate(BinTree currentNode) {
-		System.out.print(currentNode.eval);
 		
-		if(currentNode.condition) ParseTree(currentNode.trueBranch);
-		else {
-			if(!currentNode.condition) ParseTree(currentNode.falseBranch);
+		public void SetMove(MOVE move) {
+			this.move = move; 
 		}
 	}
 	
-	void ParseTree(BinTree currentNode) {
-		if(currentNode.trueBranch == null) {
-			if(currentNode.falseBranch == null) {
-				result = currentNode.eval;
+	Node root;
+	public MOVE result;
+	
+	public void SetRoot(int newId, DiscreteTag condition, int dataIndex)
+	{
+		root = new Node(newId, condition, dataIndex);
+	}
+	
+	public void SetParent(Node parent, Node child) {
+		child.parent = parent;
+		if(!parent.children.contains(child)) parent.children.add(child);
+	}
+	
+	public void AddChild(Node child, Node parent) {
+		if(!parent.children.contains(child)) parent.children.add(child);
+		if(child.parent != parent) child.parent = parent;
+	}
+	
+	void ParseTree(Node currentNode, SampleData discreteData) 
+	{
+		System.out.print(currentNode.condition);
+		
+		if(currentNode.children.isEmpty()) {
+				result = currentNode.move;
+				return;
 			}
-			return;
+		
+		for(Node child : currentNode.children) {
+			if(discreteData.dataList.get(child.dataIndex) == child.condition) {
+				ParseTree(child, discreteData);
+			}
 		}
-		if(currentNode.falseBranch == null) {
-			return;
-		}
-		Evaluate(currentNode);
+		
+		System.out.print("Move not found, something wrong with tree?");
+		result = MOVE.NEUTRAL;
 	}
 	
-	public void ParseTree() {
-		ParseTree(root);
+	
+	
+	public void ParseTree(SampleData discreteData) {
+		ParseTree(root, discreteData);
 	}
 }

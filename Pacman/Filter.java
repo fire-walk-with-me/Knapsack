@@ -4,7 +4,7 @@ import dataRecording.DataTuple;
 import dataRecording.DataTuple.DiscreteTag;
 import pacman.game.Game;
 import pacman.game.Constants.MOVE;
-import BehaviourTree.GameInformation;
+//import BehaviourTree.GameInformation;
 import DT.SampleData;
 
 public class Filter {
@@ -17,11 +17,11 @@ public class Filter {
 	DiscreteTag isGhostEdible; //Very_Low (0.0 -> notEdible), Very_High (1.0 -> edible)
 	DiscreteTag ghostDistance; //Very_low (ghost close), Very_High (ghost far away)
 	
-	GameInformation information;
+	//GameInformation information;
 	MOVE myMove;
 	
 	public Filter (){
-		information = new GameInformation();
+		//information = new GameInformation();
 	}
 	
 	public void Filter_Data() {

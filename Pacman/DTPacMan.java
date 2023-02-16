@@ -7,6 +7,9 @@ import pacman.game.Game;
 import java.util.ArrayList;
 import java.util.List;
 
+import dataRecording.DataSaverLoader;
+import dataRecording.DataTuple;
+
 
 public class DTPacMan extends Controller<MOVE>
 {
@@ -31,7 +34,10 @@ public class DTPacMan extends Controller<MOVE>
 			firstRun = false;
 		}
 		
-		TraverseTree();
+		DataTuple data = new DataTuple(game, MOVE.NEUTRAL); //Neutral because we don't know what move we want to make yet
+		SampleData discreteData = new SampleData(data);
+		
+		TraverseTree(discreteData);
 		
 		return move;
 	}
@@ -43,17 +49,27 @@ public class DTPacMan extends Controller<MOVE>
 	}
 	
 	
-	public void TraverseTree()
+	public void TraverseTree(SampleData discreteData)
 	{
-		activeTree.ParseTree();
+		activeTree.ParseTree(discreteData);
 		
-		if(activeTree.result == "up") {setMOVE(MOVE.UP);}
-		else if(activeTree.result == "down") {setMOVE(MOVE.DOWN);}
-		else if (activeTree.result == "left") {setMOVE(MOVE.LEFT);}
-		else if(activeTree.result == "right") {setMOVE(MOVE.RIGHT);}
-		else if(activeTree.result == null) {setMOVE(MOVE.NEUTRAL);}
+		if(true) {setMOVE(MOVE.UP);}
+		else if(true) {setMOVE(MOVE.DOWN);}
+		else if (true) {setMOVE(MOVE.LEFT);}
+		else if(true) {setMOVE(MOVE.RIGHT);}
+		else if(true) {setMOVE(MOVE.NEUTRAL);}
 	}
 		
+	
+	public void Filter_Data() {
+		DataTuple[] mySaveData = DataSaverLoader.LoadPacManData();
+		SampleData[] mySamples = new SampleData[mySaveData.length];
+		for(int i = 0; i < mySaveData.length; i++)
+		{
+			mySamples[i] = new SampleData(mySaveData[i]);
+		}		
+		
+	}
 	
 	public Game getGame() {
 		return game;
