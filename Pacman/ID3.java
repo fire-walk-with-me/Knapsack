@@ -55,7 +55,7 @@ private void generateTree(Node currentNode)
         return;
     }
     
-    for(int i = 1; i < DiscreteTag.values().length - 2; i++){
+    for(int i = 1; i < DiscreteTag.values().length - 2; i++){ //Start at 0 and remove -2 to include Very_high/low tags
     subsetData.clear();
   	  for(int j = 0; j < sampleList.size(); j++) {
   		  if(sampleList.get(j).dataList.get(currentNode.dataIndex) == DiscreteTag.values()[i]) {
@@ -64,6 +64,9 @@ private void generateTree(Node currentNode)
   	  }
   	  int attributeIndex = GetAttributeWithHighestIG(currentNode.attrbutesChecked, subsetData);
     	decisionTree.CreateNode(i, DiscreteTag.values()[i], attributeIndex, currentNode);
+    	if(isSingleLable(subsetData)) {
+    		//set move to return by the node here by giving it subsetData.get(0).GetMoveOutcome()
+    	}
     }
     
     for(Node child : currentNode.children)
@@ -81,8 +84,8 @@ public int GetAttributeWithHighestIG(List<Integer> attributeIndexChecked, List<S
 	
 	  for(int i = 0; i < numAttributes; i++) { 
 		  boolean checkCleared = true;
-		  for(int j = 0; j < attributeIndexChecked.size(); j++) { //should never enter here for the root
-			  if(i == attributeIndexChecked.get(j)) {
+		  for(int j = 0; j < attributeIndexChecked.size(); j++) { 
+			  if(i == attributeIndexChecked.get(j)) { //should never enter here for the root
 				  informationGain.add(-1.0);
 				  checkCleared = false;
 				  break;
@@ -90,12 +93,12 @@ public int GetAttributeWithHighestIG(List<Integer> attributeIndexChecked, List<S
 			  
 		  }
 		  if(checkCleared) {
-			  informationGain.add(InformationGain(i, subsetData)); // Adds for each attribute that is checked
+			  informationGain.add(InformationGain(i, subsetData)); // Adds for each attribute that is not checked before the parent
 		  }
 	  }
 	  
 	  
-	  for(int i = 0; i < informationGain.size(); i++) {
+	  for(int i = 0; i < informationGain.size(); i++) { //Finds the attribute with highest IG for the subset
 		  if(informationGain.get(i) > highestIG) {
 			  highestIG = informationGain.get(i);
 			  attributeIndex = i;
@@ -113,7 +116,7 @@ public void CalculateEntropyOfTheSystem(List<SampleData> applicableRows) {
 	  double nrOfMoveUp = 0.0;
 	  double nrOfMoveDown = 0.0;
 	  
-	  for(SampleData sample : applicableRows) { //Need to replace this with the rows that relate to the parent node
+	  for(SampleData sample : applicableRows) { //Checks the move outcome of the data set
 		  if(sample.GetMoveOutcome() == MOVE.DOWN) {
 			  nrOfMoveDown++;
 		  }
@@ -143,7 +146,7 @@ public double InformationGain(int columnIndex, List<SampleData> applicableRows) 
   double nrOfLowTags = 0.0;
   
   for(int j = 0; j < numTraningsets; j++) { //Row iterator
-	  if(applicableRows.get(columnIndex).dataList.get(j) == DiscreteTag.HIGH) {
+	  if(applicableRows.get(columnIndex).dataList.get(j) == DiscreteTag.HIGH || applicableRows.get(columnIndex).dataList.get(j) == DiscreteTag.VERY_HIGH) {
 		  CheckMoveType(listTagsHigh, j, applicableRows);
 		  nrOfHighTags += 1;
 	  }
@@ -151,7 +154,7 @@ public double InformationGain(int columnIndex, List<SampleData> applicableRows) 
 		  CheckMoveType(listTagsMedium, j, applicableRows);
 		  nrOfMediumTags += 1;
 	  }
-	  else if(applicableRows.get(columnIndex).dataList.get(j) == DiscreteTag.LOW) {
+	  else if(applicableRows.get(columnIndex).dataList.get(j) == DiscreteTag.LOW || applicableRows.get(columnIndex).dataList.get(j) == DiscreteTag.VERY_LOW) {
 		  CheckMoveType(listTagsLow, j, applicableRows);
 		  nrOfLowTags += 1;
 	  }
@@ -196,15 +199,15 @@ public double log2(double N)
     return result;
 } 
 
-boolean isSingleLable() 
+boolean isSingleLable(List<SampleData> subsetData) //Check if all the data rows have the same outcome
 {
-	String classification = lable;
+	MOVE classification = subsetData.get(0).GetMoveOutcome(); //Any row will do here to compare
 	
-	/*for (SampleData sample : sampleList) {
-		if(classification.compareTo(sample.lable) != 0) return false;
-	}*/
+	for (SampleData sample : subsetData) {
+		if(classification != sample.GetMoveOutcome()) return false;
+	}
 	
-	return true;
+	return true; //if true then we can say that all rows have the same move outcome and we don't need to continue building the tree
 }
 
 
