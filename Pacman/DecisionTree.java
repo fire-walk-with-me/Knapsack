@@ -83,7 +83,7 @@ public class DecisionTree
 			}
 		
 		for(Node child : currentNode.children) {
-			if(discreteData.dataList.get(child.dataIndex) == child.condition) {
+			if(discreteData.dataList.get(child.parent.dataIndex) == child.condition) {
 				ParseTree(child, discreteData);
 			}
 		}
