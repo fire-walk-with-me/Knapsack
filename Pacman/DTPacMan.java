@@ -15,7 +15,7 @@ public class DTPacMan extends Controller<MOVE>
 {
 	Game game;
 	MOVE move;
-	Boolean firstRun = true;
+	Boolean firstTick = true;
 	List<SampleData> data = new ArrayList<SampleData>();
 	ID3 ID3Algorithm;
 	DecisionTree activeTree;
@@ -28,14 +28,15 @@ public class DTPacMan extends Controller<MOVE>
 	public MOVE getMove(Game game, long timeDue) {
 		//state.Update(game, this);
 		
-		if(firstRun) {
+		if(firstTick) {
+			Filter_Data();
 			ID3Algorithm = new ID3(data);
 			GenerateTree();
-			firstRun = false;
+			firstTick = false;
 		}
 		
-		DataTuple data = new DataTuple(game, MOVE.NEUTRAL); //Neutral because we don't know what move we want to make yet
-		SampleData discreteData = new SampleData(data);
+		DataTuple gameData = new DataTuple(game, MOVE.NEUTRAL); //Neutral because we don't know what move we want to make yet
+		SampleData discreteData = new SampleData(gameData);
 		
 		TraverseTree(discreteData);
 		
@@ -53,22 +54,21 @@ public class DTPacMan extends Controller<MOVE>
 	{
 		activeTree.ParseTree(discreteData);
 		
-		if(true) {setMOVE(MOVE.UP);}
-		else if(true) {setMOVE(MOVE.DOWN);}
-		else if (true) {setMOVE(MOVE.LEFT);}
-		else if(true) {setMOVE(MOVE.RIGHT);}
-		else if(true) {setMOVE(MOVE.NEUTRAL);}
+		if(activeTree.result == MOVE.UP) {setMOVE(MOVE.UP);}
+		else if(activeTree.result == MOVE.DOWN) {setMOVE(MOVE.DOWN);}
+		else if (activeTree.result == MOVE.LEFT) {setMOVE(MOVE.LEFT);}
+		else if(activeTree.result == MOVE.RIGHT) {setMOVE(MOVE.RIGHT);}
+		else if(activeTree.result == MOVE.NEUTRAL) {setMOVE(MOVE.NEUTRAL);}
 	}
 		
 	
 	public void Filter_Data() {
 		DataTuple[] mySaveData = DataSaverLoader.LoadPacManData();
-		SampleData[] mySamples = new SampleData[mySaveData.length];
 		for(int i = 0; i < mySaveData.length; i++)
 		{
-			mySamples[i] = new SampleData(mySaveData[i]);
+		   SampleData s = new SampleData(mySaveData[i]);
+		   data.add(s);
 		}		
-		
 	}
 	
 	public Game getGame() {

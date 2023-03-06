@@ -63,17 +63,19 @@ private void generateTree(Node currentNode)
   		  }
   	  }
   	  int attributeIndex = GetAttributeWithHighestIG(currentNode.attrbutesChecked, subsetData);
-    	decisionTree.CreateNode(i, DiscreteTag.values()[i], attributeIndex, currentNode);
+    	Node n = decisionTree.CreateNode(i, DiscreteTag.values()[i], attributeIndex, currentNode);
     	if(isSingleLable(subsetData)) {
-    		//set move to return by the node here by giving it subsetData.get(0).GetMoveOutcome()
+    		n.SetMove(subsetData.get(0).GetMoveOutcome());
+    		return; //set move to return by the node here by giving it subsetData.get(0).GetMoveOutcome()
     	}
     }
+    
+    if(subsetData.size() == 1)
     
     for(Node child : currentNode.children)
     {
         generateTree(child);
     }
-
 }
 
 public int GetAttributeWithHighestIG(List<Integer> attributeIndexChecked, List<SampleData> subsetData) {
@@ -84,19 +86,20 @@ public int GetAttributeWithHighestIG(List<Integer> attributeIndexChecked, List<S
 	
 	  for(int i = 0; i < numAttributes; i++) { 
 		  boolean checkCleared = true;
-		  for(int j = 0; j < attributeIndexChecked.size(); j++) { 
-			  if(i == attributeIndexChecked.get(j)) { //should never enter here for the root
-				  informationGain.add(-1.0);
-				  checkCleared = false;
-				  break;
-			  }
-			  
+		  
+		  if(attributeIndexChecked.size() > 0) {
+			  for(int j = 0; j < attributeIndexChecked.size(); j++) { 
+				  if(i == attributeIndexChecked.get(j)) { //should never enter here for the root
+					  informationGain.add(-1.0);
+					  checkCleared = false;
+					  break;
+				  	}
+			  }  
 		  }
 		  if(checkCleared) {
 			  informationGain.add(InformationGain(i, subsetData)); // Adds for each attribute that is not checked before the parent
 		  }
 	  }
-	  
 	  
 	  for(int i = 0; i < informationGain.size(); i++) { //Finds the attribute with highest IG for the subset
 		  if(informationGain.get(i) > highestIG) {
@@ -145,20 +148,19 @@ public double InformationGain(int columnIndex, List<SampleData> applicableRows) 
   double nrOfMediumTags = 0.0;
   double nrOfLowTags = 0.0;
   
-  for(int j = 0; j < numTraningsets; j++) { //Row iterator
-	  if(applicableRows.get(columnIndex).dataList.get(j) == DiscreteTag.HIGH || applicableRows.get(columnIndex).dataList.get(j) == DiscreteTag.VERY_HIGH) {
+  for(int j = 0; j < applicableRows.size(); j++) { //Row iterator
+	  if(applicableRows.get(j).dataList.get(columnIndex) == DiscreteTag.HIGH || applicableRows.get(j).dataList.get(columnIndex) == DiscreteTag.VERY_HIGH) {
 		  CheckMoveType(listTagsHigh, j, applicableRows);
 		  nrOfHighTags += 1;
 	  }
-	  else if(applicableRows.get(columnIndex).dataList.get(j) == DiscreteTag.MEDIUM) {
+	  else if(applicableRows.get(j).dataList.get(columnIndex) == DiscreteTag.MEDIUM) {
 		  CheckMoveType(listTagsMedium, j, applicableRows);
 		  nrOfMediumTags += 1;
 	  }
-	  else if(applicableRows.get(columnIndex).dataList.get(j) == DiscreteTag.LOW || applicableRows.get(columnIndex).dataList.get(j) == DiscreteTag.VERY_LOW) {
+	  else if(applicableRows.get(j).dataList.get(columnIndex) == DiscreteTag.LOW || applicableRows.get(j).dataList.get(columnIndex) == DiscreteTag.VERY_LOW) {
 		  CheckMoveType(listTagsLow, j, applicableRows);
 		  nrOfLowTags += 1;
 	  }
-
   }
 	  
 	  
@@ -201,6 +203,8 @@ public double log2(double N)
 
 boolean isSingleLable(List<SampleData> subsetData) //Check if all the data rows have the same outcome
 {
+	if(subsetData == null || subsetData.size() < 1) return false;
+	
 	MOVE classification = subsetData.get(0).GetMoveOutcome(); //Any row will do here to compare
 	
 	for (SampleData sample : subsetData) {

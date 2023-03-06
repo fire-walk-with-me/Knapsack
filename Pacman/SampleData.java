@@ -104,4 +104,7 @@ public class SampleData {
 	}
 	
 
+	public MOVE GetMoveOutcome() {
+		return outcome;
+	}
 }
