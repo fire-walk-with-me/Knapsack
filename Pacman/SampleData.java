@@ -13,8 +13,14 @@ public class SampleData {
 	DiscreteTag pacmanPosition; //Very_low (???), Very_High (???)
 	DiscreteTag numOfPillsLeft; //Very_low (Few pills left), Very_High (Many pills left)
 	DiscreteTag numOfPowerPillsLeft; //Very_low (Few pp left), Very_High (Many pp left)
-	DiscreteTag isGhostEdible; //Very_Low (0.0 -> notEdible), Very_High (1.0 -> edible)
-	DiscreteTag ghostDistance; //Very_low (ghost close), Very_High (ghost far away)
+	DiscreteTag isBlinkyEdible; //Very_Low (0.0 -> notEdible), Very_High (1.0 -> edible)
+	DiscreteTag isInkyEdible;
+	DiscreteTag isPinkyEdible;
+	DiscreteTag isSueEdible;
+	DiscreteTag blinkyDist; //Very_low (ghost close), Very_High (ghost far away)
+	DiscreteTag inkyDist;
+	DiscreteTag pinkyDist;
+	DiscreteTag sueDist;
 
 	//Might not use these below
 	DiscreteTag distanceToPowerPill;
@@ -34,14 +40,14 @@ public class SampleData {
 		//this.pacmanLivesLeft;
 		numOfPillsLeft = mySample.discretizeNumberOfPills(mySample.numOfPillsLeft);
 		numOfPowerPillsLeft = mySample.discretizeNumberOfPowerPills(mySample.numOfPowerPillsLeft);
-		//isGhostEdible = mySample.discretizeVulnerability(mySample.isBlinkyEdible);
-		/*this.isInkyEdible;
-		this.isPinkyEdible;
-		this.isSueEdible;*/
-		ghostDistance = mySample.discretizeDistance(mySample.blinkyDist);
-		/*this.inkyDist;
-		this.pinkyDist;
-		this.sueDist;*/
+		isBlinkyEdible = mySample.discretizeVulnerability(mySample.isBlinkyEdible);
+		isInkyEdible = mySample.discretizeVulnerability(mySample.isInkyEdible);
+		isPinkyEdible = mySample.discretizeVulnerability(mySample.isPinkyEdible);
+		isSueEdible = mySample.discretizeVulnerability(mySample.isSueEdible);
+		blinkyDist = mySample.discretizeDistance(mySample.blinkyDist);
+		inkyDist = mySample.discretizeDistance(mySample.inkyDist);
+		pinkyDist = mySample.discretizeDistance(mySample.pinkyDist);
+		sueDist = mySample.discretizeDistance(mySample.sueDist);;
 		//this.blinkyDir; //Might not care what direction the ghost are moving just the relative distance
 		/*this.inkyDir;
 		this.pinkyDir;
@@ -50,20 +56,30 @@ public class SampleData {
 		//this.numberOfTotalPillsInLevel;
 		//this.numberOfTotalPowerPillsInLevel;
 		
-		dataList.add(mazeIndex);
-		dataList.add(currentLevel);
+		//dataList.add(mazeIndex);
+		//dataList.add(currentLevel);
 		dataList.add(pacmanPosition);
 		dataList.add(numOfPillsLeft);
 		dataList.add(numOfPowerPillsLeft);
-		dataList.add(isGhostEdible);
-		dataList.add(ghostDistance);
+		dataList.add(isBlinkyEdible);
+		dataList.add(isInkyEdible);
+		dataList.add(isPinkyEdible);
+		dataList.add(isSueEdible);
+		dataList.add(blinkyDist);
+		dataList.add(inkyDist);
+		dataList.add(pinkyDist);
+		dataList.add(sueDist);
 		
-		int[] distanceToGhosts = new int[] {mySample.blinkyDist, mySample.inkyDist, mySample.pinkyDist, mySample.sueDist};
+		/*int[] distanceToGhosts = new int[] {mySample.blinkyDist, mySample.inkyDist, mySample.pinkyDist, mySample.sueDist};
 		boolean[] ghostEdible = new boolean[] {mySample.isBlinkyEdible, mySample.isInkyEdible, mySample.isPinkyEdible, mySample.isSueEdible};
 		
-		distanceToClosestGhost = mySample.discretizeDistance(TagDistanceToGhost(distanceToGhosts));
+		distanceToClosestGhost = mySample.discretizeDistance(TagDistanceToGhost(distanceToGhosts));*/
 		//ghostVoulnerability = mySample.discretizeVulnerability(TagAreGhostsEdible(ghostEdible));
 
+	}
+	
+	public MOVE GetMoveOutcome() {
+		return outcome;
 	}
 	
 	/**
@@ -104,7 +120,4 @@ public class SampleData {
 	}
 	
 
-	public MOVE GetMoveOutcome() {
-		return outcome;
-	}
 }

@@ -58,7 +58,11 @@ public class ID3 {
 					subsetData.add(subData.get(j)); // Add sample row that has the right tag
 				}
 			}
-
+			
+			if(subsetData.size() <= 0) {
+				continue; //Borde kolla här att subset data har något i sig och inte är tom för isf bör vi inte skapa en nod
+			}
+						
 			int attributeIndex = GetAttributeWithHighestIG(currentNode.attrbutesChecked, subsetData);
 			Node child = decisionTree.CreateNode(i, DiscreteTag.values()[i], attributeIndex, currentNode);
 
@@ -66,7 +70,11 @@ public class ID3 {
 				child.SetMove(subsetData.get(0).GetMoveOutcome());
 				return; // set move to return by the node here by giving it
 						// subsetData.get(0).GetMoveOutcome()
-			} else {
+			} else if(attributeIndex == -1){
+				child.SetMove(MOVE.NEUTRAL);
+				return;
+			}
+				else {
 				generateTree(child, subsetData);
 			}
 			subsetData.clear();
@@ -76,7 +84,7 @@ public class ID3 {
 	public int GetAttributeWithHighestIG(List<Integer> attributeIndexChecked, List<SampleData> subsetData) {
 		CalculateEntropyOfTheSystem(subsetData); // Calculate the entropy of the subset data set
 		double highestIG = 0.0;
-		int attributeIndex = 0;
+		int attributeIndex = -1; //0 är default för oss här så om inget har ett IG värde som är > 0 så blir det 0 för vårt index
 		informationGain.clear();
 
 		for (int i = 0; i < numAttributes; i++) {
@@ -95,13 +103,18 @@ public class ID3 {
 				informationGain.add(InformationGain(i, subsetData)); // Adds for each attribute that is not checked before the parent
 			}
 		}
+		
+		
 
 		for (int i = 0; i < informationGain.size(); i++) { // Finds the attribute with highest IG for the subset
 			if (informationGain.get(i) > highestIG) {
 				highestIG = informationGain.get(i);
 				attributeIndex = i;
-
+				
 			}
+		}
+		if(attributeIndex == -1) {
+			//System.out.print("All 0 or -1?");
 		}
 
 		return attributeIndex;
@@ -109,25 +122,22 @@ public class ID3 {
 
 	public void CalculateEntropyOfTheSystem(List<SampleData> applicableRows) {
 
-		double nrOfMoveLeft = 0.0;
-		double nrOfMoveRight = 0.0;
-		double nrOfMoveUp = 0.0;
-		double nrOfMoveDown = 0.0;
+		double[] nrOfMoveDir = new double[] { 0.0, 0.0, 0.0, 0.0 }; //Up, down, left, right
 
 		for (SampleData sample : applicableRows) { // Checks the move outcome of the data set
-			if (sample.GetMoveOutcome() == MOVE.DOWN) {
-				nrOfMoveDown++;
-			} else if (sample.GetMoveOutcome() == MOVE.UP) {
-				nrOfMoveUp++;
+			if (sample.GetMoveOutcome() == MOVE.UP) {
+				nrOfMoveDir[0] = nrOfMoveDir[0] + 1;
+			} else if (sample.GetMoveOutcome() == MOVE.DOWN) {
+				nrOfMoveDir[1] = nrOfMoveDir[1] + 1;
 			} else if (sample.GetMoveOutcome() == MOVE.LEFT) {
-				nrOfMoveLeft++;
+				nrOfMoveDir[2] = nrOfMoveDir[2] + 1;
 			} else if (sample.GetMoveOutcome() == MOVE.RIGHT) {
-				nrOfMoveRight++;
+				nrOfMoveDir[3] = nrOfMoveDir[3] + 1;
 			}
 
 		}
 
-		entropyOfSystem = Entropy(nrOfMoveUp, nrOfMoveDown, nrOfMoveLeft, nrOfMoveRight);
+		entropyOfSystem = Entropy(nrOfMoveDir);
 	}
 
 	public double InformationGain(int columnIndex, List<SampleData> applicableRows) {
@@ -155,9 +165,9 @@ public class ID3 {
 			}
 		}
 
-		double entropyHigh = Entropy(listTagsHigh[0], listTagsHigh[1], listTagsHigh[2], listTagsHigh[3]);
-		double entropyMedium = Entropy(listTagsMedium[0], listTagsMedium[1], listTagsMedium[2], listTagsMedium[3]);
-		double entropyLow = Entropy(listTagsLow[0], listTagsLow[1], listTagsLow[2], listTagsLow[3]);
+		double entropyHigh = Entropy(listTagsHigh);
+		double entropyMedium = Entropy(listTagsMedium);
+		double entropyLow = Entropy(listTagsLow);
 
 		double totalTags = nrOfHighTags + nrOfMediumTags + nrOfLowTags;
 
@@ -177,9 +187,18 @@ public class ID3 {
 		}
 	}
 
-	public double Entropy(double up, double down, double left, double right) {
-		double total = up + down + left + right;
-		double entropy =  -(up / total) * log2(up / total) - (down / total) * log2(down / total) - (left / total) * log2(left / total) - (right / total) * log2(right / total);
+	public double Entropy(double[] frequency) {
+		double total = 0.0;
+		for(Double f : frequency) {
+			total += f;
+		}
+		
+		double entropy = 0.0;
+		for(Double p: frequency) {
+			if(p > 0.0) {
+				entropy += -(p / total) * log2(p / total);
+			}
+		}
 		
 		if(!Double.isNaN(entropy)) return entropy;
 		
