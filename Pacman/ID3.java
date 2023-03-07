@@ -85,15 +85,14 @@ public class ID3 {
 			if (attributeIndexChecked.size() > 0) {
 				for (int j = 0; j < attributeIndexChecked.size(); j++) {
 					if (i == attributeIndexChecked.get(j)) { // should never enter here for the root
-						informationGain.add(-100000.0);
+						informationGain.add(-1.0);
 						checkCleared = false;
 						break;
 					}
 				}
 			}
 			if (checkCleared) {
-				informationGain.add(InformationGain(i, subsetData)); // Adds for each attribute that is not checked
-																		// before the parent
+				informationGain.add(InformationGain(i, subsetData)); // Adds for each attribute that is not checked before the parent
 			}
 		}
 
@@ -180,8 +179,11 @@ public class ID3 {
 
 	public double Entropy(double up, double down, double left, double right) {
 		double total = up + down + left + right;
-		return -(up / total) * log2(up / total) - (down / total) * log2(down / total)
-				- (left / total) * log2(left / total) - (right / total) * log2(right / total);
+		double entropy =  -(up / total) * log2(up / total) - (down / total) * log2(down / total) - (left / total) * log2(left / total) - (right / total) * log2(right / total);
+		
+		if(!Double.isNaN(entropy)) return entropy;
+		
+		return 0.0;
 	}
 
 	public double log2(double N) {
