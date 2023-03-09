@@ -8,8 +8,8 @@ import java.util.List;
 
 public class SampleData {
 	MOVE outcome;
-	DiscreteTag mazeIndex; //Very_low (???), Very_High (???)
-	DiscreteTag currentLevel; //Very_low (Start Level is 0), Very_High (Last Level)
+	//DiscreteTag mazeIndex; //Very_low (???), Very_High (???)
+	//DiscreteTag currentLevel; //Very_low (Start Level is 0), Very_High (Last Level)
 	DiscreteTag pacmanPosition; //Very_low (???), Very_High (???)
 	DiscreteTag numOfPillsLeft; //Very_low (Few pills left), Very_High (Many pills left)
 	DiscreteTag numOfPowerPillsLeft; //Very_low (Few pp left), Very_High (Many pp left)
@@ -34,8 +34,8 @@ public class SampleData {
 	public SampleData(DataTuple mySample) {
 
 		outcome = mySample.DirectionChosen;
-		mazeIndex = mySample.discretizePosition(mySample.mazeIndex); 
-		currentLevel = DiscreteTag.DiscretizeDouble(mySample.normalizeLevel(mySample.currentLevel));
+		//mazeIndex = mySample.discretizePosition(mySample.mazeIndex); 
+		//currentLevel = DiscreteTag.DiscretizeDouble(mySample.normalizeLevel(mySample.currentLevel));
 		pacmanPosition = mySample.discretizePosition(mySample.pacmanPosition);
 		//this.pacmanLivesLeft;
 		numOfPillsLeft = mySample.discretizeNumberOfPills(mySample.numOfPillsLeft);
@@ -47,7 +47,7 @@ public class SampleData {
 		blinkyDist = mySample.discretizeDistance(mySample.blinkyDist);
 		inkyDist = mySample.discretizeDistance(mySample.inkyDist);
 		pinkyDist = mySample.discretizeDistance(mySample.pinkyDist);
-		sueDist = mySample.discretizeDistance(mySample.sueDist);;
+		sueDist = mySample.discretizeDistance(mySample.sueDist);
 		//this.blinkyDir; //Might not care what direction the ghost are moving just the relative distance
 		/*this.inkyDir;
 		this.pinkyDir;
@@ -69,6 +69,12 @@ public class SampleData {
 		dataList.add(inkyDist);
 		dataList.add(pinkyDist);
 		dataList.add(sueDist);
+		
+		for(int i = 7; i < dataList.size(); i++) { 
+			if(dataList.get(i) == DiscreteTag.NONE) {
+				dataList.set(i, DiscreteTag.MEDIUM);
+			}
+		}
 		
 		/*int[] distanceToGhosts = new int[] {mySample.blinkyDist, mySample.inkyDist, mySample.pinkyDist, mySample.sueDist};
 		boolean[] ghostEdible = new boolean[] {mySample.isBlinkyEdible, mySample.isInkyEdible, mySample.isPinkyEdible, mySample.isSueEdible};

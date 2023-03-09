@@ -75,7 +75,7 @@ public class DecisionTree
 	
 	void ParseTree(Node currentNode, SampleData discreteData) 
 	{
-		System.out.print(currentNode.condition);
+		//System.out.print(currentNode.condition);
 		
 		if(currentNode.children.isEmpty()) {
 				result = currentNode.move;
@@ -85,6 +85,7 @@ public class DecisionTree
 		for(Node child : currentNode.children) {
 			if(discreteData.dataList.get(child.parent.dataIndex) == child.condition) {
 				ParseTree(child, discreteData);
+				return;
 			}
 		}
 		

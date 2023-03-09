@@ -50,7 +50,7 @@ public class ID3 {
 
 		List<SampleData> subsetData = new ArrayList<SampleData>();
 
-		for (int i = 1; i < DiscreteTag.values().length - 2; i++) { // Start at 0 and remove -2 to include Very_high/low
+		for (int i = 1; i < DiscreteTag.values().length - 2; i++) { // Start at 1 and remove -1 to not include Very_high/low
 																	// tags
 
 			for (int j = 0; j < subData.size(); j++) {
@@ -60,6 +60,8 @@ public class ID3 {
 			}
 			
 			if(subsetData.size() <= 0) {
+				Node child = decisionTree.CreateNode(i, DiscreteTag.values()[i], -1, currentNode);
+				child.SetMove(GetMostCommonMove(subData));
 				continue; //Borde kolla här att subset data har något i sig och inte är tom för isf bör vi inte skapa en nod
 			}
 						
@@ -68,17 +70,53 @@ public class ID3 {
 
 			if (isSingleLable(subsetData)) {
 				child.SetMove(subsetData.get(0).GetMoveOutcome());
-				return; // set move to return by the node here by giving it
-						// subsetData.get(0).GetMoveOutcome()
+				continue; 
 			} else if(attributeIndex == -1){
-				child.SetMove(MOVE.NEUTRAL);
-				return;
+				child.SetMove(GetMostCommonMove(subsetData));
+				continue;
 			}
 				else {
 				generateTree(child, subsetData);
 			}
 			subsetData.clear();
 		}
+	}
+	
+	public MOVE GetMostCommonMove(List<SampleData> sampleDatas) {
+		int[] moveFrequency = new int[] { 0, 0, 0, 0 };
+		for(SampleData data : sampleDatas) {
+			if (data.GetMoveOutcome() == MOVE.UP) {
+				moveFrequency[0] += 1;
+			} else if (data.GetMoveOutcome() == MOVE.DOWN) {
+				moveFrequency[1] += 1;
+			} else if (data.GetMoveOutcome() == MOVE.LEFT) {
+				moveFrequency[2] += 1;
+			} else if (data.GetMoveOutcome() == MOVE.RIGHT) {
+				moveFrequency[3] += 1;
+			}
+		}
+		
+		int highestMoveFequency = 0;
+		int highestMoveIndex = -1;
+		for(int i = 0; i < moveFrequency.length; i++) {
+			if(moveFrequency[i] > highestMoveFequency) {
+				highestMoveIndex = i;
+				highestMoveFequency = moveFrequency[i];
+			}
+		}
+		
+		if (highestMoveIndex == 0) {
+			return MOVE.UP;
+		} else if (highestMoveIndex == 1) {
+			return MOVE.DOWN;
+		} else if (highestMoveIndex == 2) {
+			return MOVE.RIGHT;
+		} else if (highestMoveIndex == 3) {
+			return MOVE.LEFT;
+		}
+		
+		return MOVE.NEUTRAL;
+		
 	}
 
 	public int GetAttributeWithHighestIG(List<Integer> attributeIndexChecked, List<SampleData> subsetData) {
@@ -142,10 +180,12 @@ public class ID3 {
 
 	public double InformationGain(int columnIndex, List<SampleData> applicableRows) {
 
+		//double[] listTagsNone = new double[] { 0.0, 0.0, 0.0, 0.0 };
 		double[] listTagsHigh = new double[] { 0.0, 0.0, 0.0, 0.0 }; // Up, down, left, right
 		double[] listTagsMedium = new double[] { 0.0, 0.0, 0.0, 0.0 };
 		double[] listTagsLow = new double[] { 0.0, 0.0, 0.0, 0.0 };
 
+		//double nrOfNoneTags = 0.0;
 		double nrOfHighTags = 0.0;
 		double nrOfMediumTags = 0.0;
 		double nrOfLowTags = 0.0;
@@ -162,17 +202,75 @@ public class ID3 {
 					|| applicableRows.get(j).dataList.get(columnIndex) == DiscreteTag.VERY_LOW) {
 				CheckMoveType(listTagsLow, j, applicableRows);
 				nrOfLowTags += 1;
-			}
+			}/*else if(applicableRows.get(j).dataList.get(columnIndex) == DiscreteTag.NONE) {
+				CheckMoveType(listTagsNone, j, applicableRows);
+				nrOfNoneTags += 1;
+			}*/
 		}
 
 		double entropyHigh = Entropy(listTagsHigh);
 		double entropyMedium = Entropy(listTagsMedium);
 		double entropyLow = Entropy(listTagsLow);
+		//double entropyNone = Entropy(listTagsNone);
 
-		double totalTags = nrOfHighTags + nrOfMediumTags + nrOfLowTags;
+		double totalTags = nrOfHighTags + nrOfMediumTags + nrOfLowTags; // + nrOfNoneTags;
 
 		return entropyOfSystem - (nrOfHighTags / totalTags) * entropyHigh - (nrOfMediumTags / totalTags) * entropyMedium
-				- (nrOfLowTags / totalTags) * entropyLow;
+				- (nrOfLowTags / totalTags) * entropyLow; /* - (nrOfNoneTags / totalTags) * entropyNone;*/
+	}
+	
+	public double InformationGain2(int columnIndex, List<SampleData> applicableRows) {
+
+		double[] listTagsNone = new double[] { 0.0, 0.0, 0.0, 0.0 };
+		double[] listTagsVeryHigh = new double[] { 0.0, 0.0, 0.0, 0.0 };
+		double[] listTagsHigh = new double[] { 0.0, 0.0, 0.0, 0.0 }; // Up, down, left, right
+		double[] listTagsMedium = new double[] { 0.0, 0.0, 0.0, 0.0 };
+		double[] listTagsLow = new double[] { 0.0, 0.0, 0.0, 0.0 };
+		double[] listTagsVeryLow = new double[] { 0.0, 0.0, 0.0, 0.0 };
+
+		double nrOfNoneTags = 0.0;
+		double nrOfVeryHighTags = 0.0;
+		double nrOfHighTags = 0.0;
+		double nrOfMediumTags = 0.0;
+		double nrOfLowTags = 0.0;
+		double nrOfVeryLowTags = 0.0;
+
+		for (int j = 0; j < applicableRows.size(); j++) { // Row iterator
+			if (applicableRows.get(j).dataList.get(columnIndex) == DiscreteTag.HIGH) {
+				CheckMoveType(listTagsHigh, j, applicableRows);
+				nrOfHighTags += 1;
+			}else if(applicableRows.get(j).dataList.get(columnIndex) == DiscreteTag.VERY_HIGH) {
+				CheckMoveType(listTagsVeryHigh, j, applicableRows);	
+				nrOfVeryHighTags += 1;
+			} else if (applicableRows.get(j).dataList.get(columnIndex) == DiscreteTag.MEDIUM) {
+				CheckMoveType(listTagsMedium, j, applicableRows);
+				nrOfMediumTags += 1;
+			} else if (applicableRows.get(j).dataList.get(columnIndex) == DiscreteTag.LOW) {
+				CheckMoveType(listTagsLow, j, applicableRows);
+				nrOfLowTags += 1;
+			}
+			else if(applicableRows.get(j).dataList.get(columnIndex) == DiscreteTag.VERY_LOW) {
+				CheckMoveType(listTagsVeryLow, j, applicableRows);
+				nrOfVeryLowTags += 1;
+			}
+			else if(applicableRows.get(j).dataList.get(columnIndex) == DiscreteTag.NONE) {
+				CheckMoveType(listTagsNone, j, applicableRows);
+				nrOfNoneTags += 1;
+			}
+		}
+
+		double entropyNone = Entropy(listTagsNone);
+		double entropyVeryHigh = Entropy(listTagsVeryHigh);
+		double entropyHigh = Entropy(listTagsHigh);
+		double entropyMedium = Entropy(listTagsMedium);
+		double entropyLow = Entropy(listTagsLow);
+		double entropyVeryLow = Entropy(listTagsVeryLow);
+
+		double totalTags = nrOfHighTags + nrOfMediumTags + nrOfLowTags + nrOfNoneTags + nrOfVeryHighTags + nrOfVeryLowTags;
+
+		return entropyOfSystem - (nrOfHighTags / totalTags) * entropyHigh - (nrOfMediumTags / totalTags) * entropyMedium
+				- (nrOfLowTags / totalTags) * entropyLow - (nrOfNoneTags / totalTags) * entropyNone 
+				- (nrOfVeryLowTags / totalTags) * entropyVeryLow - (nrOfVeryHighTags / totalTags) * entropyVeryHigh;
 	}
 
 	public void CheckMoveType(double[] listTags, int sampleRowIndex, List<SampleData> applicableRows) {
